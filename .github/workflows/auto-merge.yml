@@ -1,0 +1,17 @@
+name: Auto Merge Exercism Bot PRs
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto-merge for Exercism-bot PRs
+        if: github.actor == 'Exercism-bot'
+        uses: pascalgn/automerge-action@v0.15.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          MERGE_METHOD: "squash"
