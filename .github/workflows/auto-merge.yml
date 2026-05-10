@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Auto-merge for Exercism-bot PRs
-        if: github.actor == 'Exercism-bot'
+        # This condition ensures only PRs from the Exercism-bot actor are auto-merged
+        if: github.actor == 'Exercism-bot' 
         uses: pascalgn/automerge-action@v0.15.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
