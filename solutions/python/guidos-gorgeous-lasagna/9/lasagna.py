@@ -1,0 +1,1 @@
+# Force update 1\nEXPECTED_BAKE_TIME = 40\n\ndef bake_time_remaining(elapsed_bake_time):\n    return EXPECTED_BAKE_TIME - elapsed_bake_time\n\ndef preparation_time_in_minutes(number_of_layers):\n    return number_of_layers * 2\n\ndef elapsed_time_in_minutes(number_of_layers, elapsed_bake_time):\n    return preparation_time_in_minutes(number_of_layers) + elapsed_bake_time
