@@ -1,0 +1,53 @@
+name: Auto Merge Exercism Bot PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Force Merge Exercism-bot PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pulls = (await github.rest.pulls.list({ owner, repo, state: 'open' })).data;
+            
+            // 修正箇所: botのログイン名は app/exercism-solutions-syncer だった
+            const botPulls = pulls.filter(pr => pr.user.login === 'app/exercism-solutions-syncer' || pr.user.login === 'exercism-solutions-syncer[bot]');
+            
+            for (const pr of botPulls) {
+              console.log(\`🚀 Processing PR #\${pr.number}: \${pr.title}\`);
+              
+              if (pr.draft) {
+                console.log(\`📝 PR #\${pr.number} is draft, converting...\`);
+                await github.graphql(\`mutation { markPullRequestReadyForReview(input: {pullRequestId: "\${pr.node_id}"}) { clientMutationId } }\`);
+                await new Promise(r => setTimeout(r, 2000));
+              }
+
+              try {
+                await github.rest.pulls.merge({ 
+                  owner, repo, 
+                  pull_number: pr.number, 
+                  merge_method: 'squash' 
+                });
+                console.log(\`✅ Merged PR #\${pr.number}\`);
+              } catch (e) {
+                console.log(\`⚠️ Standard merge failed, trying GraphQL force merge...\`);
+                try {
+                  await github.graphql(\`mutation { mergePullRequest(input: { pullRequestId: "\${pr.node_id}", mergeMethod: SQUASH }) { clientMutationId } }\`);
+                  console.log(\`✅ Force merged PR #\${pr.number}\`);
+                } catch (err) {
+                  console.log(\`❌ Failed to merge PR #\${pr.number}: \${err.message}\`);
+                }
+              }
+            }
