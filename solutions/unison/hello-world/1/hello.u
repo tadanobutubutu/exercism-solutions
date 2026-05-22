@@ -1,0 +1,2 @@
+hello : Text
+hello = "Hello, World!"
