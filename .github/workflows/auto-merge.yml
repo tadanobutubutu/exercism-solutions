@@ -4,8 +4,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
+
+concurrency:
+  group: auto-merge-prs
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -21,7 +25,7 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             
-            // 古い順にオープンなPRを取得する
+            // Get open PRs sorted by creation date (oldest first)
             const pulls = (await github.rest.pulls.list({ 
               owner, 
               repo, 
@@ -33,11 +37,31 @@ jobs:
             
             console.log(`🔍 Found ${pulls.length} open pull requests.`);
             
+            async function mergeWithRetry(pr, owner, repo, attempt = 1) {
+              try {
+                await github.rest.pulls.merge({ 
+                  owner, repo, 
+                  pull_number: pr.number, 
+                  merge_method: 'merge' 
+                });
+                console.log(`✅ Merged PR #${pr.number}`);
+                return true;
+              } catch (e) {
+                if ((e.message.includes('Merge already in progress') || e.status === 409) && attempt < 3) {
+                  console.log(`⚠️ Merge collision / progress for PR #${pr.number}. Retrying in 5s... (Attempt ${attempt}/3)`);
+                  await new Promise(r => setTimeout(r, 5000));
+                  return await mergeWithRetry(pr, owner, repo, attempt + 1);
+                }
+                console.log(`❌ Failed to merge PR #${pr.number}: ${e.message}`);
+                return false;
+              }
+            }
+
             for (const pr of pulls) {
               const creator = pr.user.login;
               
-              // ExercismのBot以外のPRはCloseする
-              if (creator !== 'exercism-solutions-syncer[bot]') {
+              // Verify if the creator is the Exercism syncer bot
+              if (!creator.toLowerCase().includes('exercism-solutions-syncer')) {
                 console.log(`⚠️ PR #${pr.number} was created by ${creator} (not the authorized bot). Closing...`);
                 try {
                   await github.rest.pulls.update({
@@ -61,7 +85,7 @@ jobs:
               
               console.log(`🚀 Processing PR #${pr.number}: ${pr.title}`);
               
-              // 1. ドラフト解除が必要なら実行 (GraphQL)
+              // Draft PR Handling
               if (pr.draft) {
                 console.log(`📝 PR #${pr.number} is draft, converting...`);
                 try {
@@ -72,24 +96,23 @@ jobs:
                 }
               }
 
-              // 2. マージ試行
-              try {
-                await github.rest.pulls.merge({ 
-                  owner, repo, 
-                  pull_number: pr.number, 
-                  merge_method: 'squash' 
-                });
-                console.log(`✅ Merged PR #${pr.number}`);
-                await new Promise(r => setTimeout(r, 3000));
-              } catch (e) {
-                console.log(`⚠️ Standard merge failed: ${e.message}. Trying GraphQL force merge...`);
+              // Merge
+              const success = await mergeWithRetry(pr, owner, repo);
+              
+              if (success) {
+                // Delete the branch after successful merge
                 try {
-                  await github.graphql(`mutation { mergePullRequest(input: { pullRequestId: "${pr.node_id}", mergeMethod: SQUASH }) { clientMutationId } }`);
-                  console.log(`✅ Force merged PR #${pr.number}`);
-                  await new Promise(r => setTimeout(r, 3000));
+                  await github.rest.git.deleteRef({
+                    owner,
+                    repo,
+                    ref: `heads/${pr.head.ref}`
+                  });
+                  console.log(`🗑️ Deleted branch ${pr.head.ref}`);
                 } catch (err) {
-                  console.log(`❌ Failed to merge PR #${pr.number}: ${err.message}`);
+                  console.log(`⚠️ Failed to delete branch ${pr.head.ref}: ${err.message}`);
                 }
+                // Wait to avoid hitting quick API rate limits
+                await new Promise(r => setTimeout(r, 4000));
               }
             }
 
