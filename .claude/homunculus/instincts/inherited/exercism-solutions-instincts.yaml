@@ -1,0 +1,278 @@
+# Instincts generated from https://github.com/tadanobutubutu/exercism-solutions
+# Generated: 2026-05-30T21:33:36.257Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: exercism-solutions-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Commit Length
+
+## Action
+
+Keep commit messages concise (~36 characters)
+
+## Evidence
+
+- Average commit message length: 36 chars
+- Based on 1 commits
+
+---
+id: exercism-solutions-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Naming Files
+
+## Action
+
+Use PascalCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: PascalCase
+
+---
+id: exercism-solutions-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: exercism-solutions-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: exercism-solutions-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: exercism-solutions-instinct-file-naming
+trigger: "When creating a new TypeScript file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct File Naming
+
+## Action
+
+Name the file using PascalCase (e.g., HelloWorld.ts)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+
+---
+id: exercism-solutions-instinct-function-naming
+trigger: "When defining a new function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Function Naming
+
+## Action
+
+Use camelCase for the function name (e.g., processInput)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: exercism-solutions-instinct-class-naming
+trigger: "When defining a new class"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Class Naming
+
+## Action
+
+Use PascalCase for the class name (e.g., SolutionRunner)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: exercism-solutions-instinct-constant-naming
+trigger: "When defining a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Constant Naming
+
+## Action
+
+Use SCREAMING_SNAKE_CASE for the constant name (e.g., MAX_ATTEMPTS)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: exercism-solutions-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Import Style
+
+## Action
+
+Use relative import paths (e.g., import { foo } from './foo')
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: exercism-solutions-instinct-export-style
+trigger: "When exporting modules or functions"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Export Style
+
+## Action
+
+Use named exports (e.g., export { foo })
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: exercism-solutions-instinct-test-location
+trigger: "When adding or organizing test files"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Test Location
+
+## Action
+
+Place test files in a separate directory from source files
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation == 'separate'
+
+---
+id: exercism-solutions-instinct-solutions-folder
+trigger: "When adding new solutions"
+confidence: 0.9
+domain: architecture
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Solutions Folder
+
+## Action
+
+Place them in the 'solutions' folder
+
+## Evidence
+
+- Pattern in architecture.folderStructure.commonFolders
+
+---
+id: exercism-solutions-instinct-commit-format
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: tadanobutubutu/exercism-solutions
+---
+
+# Exercism Solutions Instinct Commit Format
+
+## Action
+
+Use freeform commit messages, optionally starting with a bracketed tag (e.g., [Sync Iteration])
+
+## Evidence
+
+- Seen in commit '[Sync Iteration] vlang/hello-world/2'
+- Pattern in commits.examples
+
