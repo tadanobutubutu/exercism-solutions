@@ -1,0 +1,5 @@
+(define (accumulate f xs)
+  (let loop ((remaining xs) (result '()))
+    (if (null? remaining)
+        (reverse result)
+        (loop (cdr remaining) (cons (f (car remaining)) result)))))
