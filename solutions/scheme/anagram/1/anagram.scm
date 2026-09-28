@@ -1,0 +1,16 @@
+(import (rnrs))
+
+(define (letters-sorted word)
+  (list-sort char<? (string->list (string-downcase word))))
+
+(define (anagram target words)
+  (let ((target-letters (letters-sorted target)))
+    (let loop ((remaining words) (matches '()))
+      (if (null? remaining)
+          (reverse matches)
+          (let ((word (car remaining)))
+            (loop (cdr remaining)
+                  (if (and (not (string-ci=? target word))
+                           (equal? target-letters (letters-sorted word)))
+                      (cons word matches)
+                      matches)))))))
