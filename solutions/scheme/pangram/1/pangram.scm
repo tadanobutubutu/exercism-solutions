@@ -1,0 +1,13 @@
+(import (rnrs))
+
+(define (pangram? phrase)
+  (let ((seen (make-vector 26 #f)))
+    (let loop ((chars (string->list phrase)))
+      (unless (null? chars)
+        (let ((ch (char-downcase (car chars))))
+          (when (and (char>=? ch #\a) (char<=? ch #\z))
+            (vector-set! seen (- (char->integer ch) (char->integer #\a)) #t)))
+        (loop (cdr chars))))
+    (let loop ((index 0))
+      (or (= index 26)
+          (and (vector-ref seen index) (loop (+ index 1)))))))
