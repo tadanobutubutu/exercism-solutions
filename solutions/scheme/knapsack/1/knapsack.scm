@@ -1,0 +1,16 @@
+(import (rnrs))
+
+(define (knapsack capacity weights values)
+  (let ((best (make-vector (+ capacity 1) 0)))
+    (let items ((remaining-weights weights) (remaining-values values))
+      (unless (null? remaining-weights)
+        (let ((weight (car remaining-weights))
+              (value (car remaining-values)))
+          (let update ((limit capacity))
+            (when (>= limit weight)
+              (vector-set! best limit
+                (max (vector-ref best limit)
+                     (+ value (vector-ref best (- limit weight)))))
+              (update (- limit 1))))
+          (items (cdr remaining-weights) (cdr remaining-values))))
+    (vector-ref best capacity))))
