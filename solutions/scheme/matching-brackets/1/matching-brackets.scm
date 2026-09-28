@@ -1,0 +1,16 @@
+(import (rnrs))
+
+(define (balanced? string)
+  (let loop ((remaining (string->list string)) (stack '()))
+    (if (null? remaining)
+        (null? stack)
+        (let ((ch (car remaining)))
+          (cond
+            ((char=? ch #\() (loop (cdr remaining) (cons #\) stack)))
+            ((char=? ch #\[) (loop (cdr remaining) (cons #\] stack)))
+            ((char=? ch #\{) (loop (cdr remaining) (cons #\} stack)))
+            ((or (char=? ch #\)) (char=? ch #\]) (char=? ch #\}))
+             (and (not (null? stack))
+                  (char=? ch (car stack))
+                  (loop (cdr remaining) (cdr stack))))
+            (else (loop (cdr remaining) stack)))))))
